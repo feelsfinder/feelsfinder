@@ -6,6 +6,6 @@ your inner weather — a map of where your feelings sit, a ranking of what keeps
 winning, and a day-by-day trend.
 
 This repository hosts the website: the support page and the privacy policy,
-served at <https://brianhubbell.com/feelsfinder/> from `docs/`.
+served at <https://feelsfinder.app> from `docs/`.
 
 Support and bug reports: [support@feelsfinder.app](mailto:support@feelsfinder.app).
