@@ -1,0 +1,6 @@
+build/
+build-rel/
+build-sim/
+xcuserdata/
+*.xcresult
+.DS_Store
