@@ -199,25 +199,45 @@ struct PatternsView: View {
     }
 
     private var footer: some View {
-        HStack(spacing: 18) {
-            if !store.picks.isEmpty {
-                ShareLink(item: store.csvFile()) {
-                    Text("EXPORT CSV").font(.label(10)).tracking(1.4)
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 18) {
+                if !store.picks.isEmpty {
+                    ShareLink(item: store.csvFile()) {
+                        Text("EXPORT CSV").font(.label(10)).tracking(1.4)
+                    }
+                    .foregroundStyle(Palette.ink3)
+                }
+                Button { confirmClear = true } label: {
+                    Text("CLEAR MY DATA").font(.label(10)).tracking(1.4)
                 }
                 .foregroundStyle(Palette.ink3)
+                Spacer(minLength: 8)
+                Text(cloudLabel)
+                    .font(.label(9)).tracking(0.8)
+                    .foregroundStyle(Palette.ink3)
+                    .multilineTextAlignment(.trailing)
             }
-            Button { confirmClear = true } label: {
-                Text("CLEAR MY DATA").font(.label(10)).tracking(1.4)
-            }
-            .foregroundStyle(Palette.ink3)
-            Spacer(minLength: 8)
-            Text(cloudLabel)
-                .font(.label(9)).tracking(0.8)
-                .foregroundStyle(Palette.ink3)
-                .multilineTextAlignment(.trailing)
+            healthToggle
         }
         .padding(.top, 6)
         .overlay(alignment: .top) { Rectangle().fill(Palette.hair).frame(height: 1) }
+    }
+
+    @ViewBuilder
+    private var healthToggle: some View {
+        let health = store.health
+        if health.isAvailable {
+            Button {
+                if health.isOn { health.turnOff() }
+                else { Task { await health.turnOn(with: store.picks) } }
+            } label: {
+                Text(health.isOn ? "SAVING TO APPLE HEALTH · TURN OFF"
+                     : health.denied ? "ALLOW IN HEALTH › SHARING › APPS"
+                     : "SAVE TO APPLE HEALTH")
+                    .font(.label(10)).tracking(1.4)
+            }
+            .foregroundStyle(Palette.ink3)
+        }
     }
 
     private var cloudLabel: String {

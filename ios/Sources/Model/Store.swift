@@ -24,6 +24,8 @@ final class Store {
     private var removed: Set<String> = []
     private var clearedAt: Double = 0
 
+    let health = HealthExport()
+
     private let backup = CloudBackup()
     private var observer: NSObjectProtocol?
     private var pushWork: DispatchWorkItem?
@@ -51,6 +53,7 @@ final class Store {
         for loser in losers where loser.id != win.id {
             picks.append(Pick(t: t, w: win.id, l: loser.id))
         }
+        health.write(at: t, win: win, over: losers.filter { $0.id != win.id })
         save()
         push()
         return t
@@ -60,6 +63,7 @@ final class Store {
     func undoChoice(at t: Double) {
         for pick in picks where pick.t == t { removed.insert(pick.id) }
         picks.removeAll { $0.t == t }
+        health.remove(at: t)
         trimTombstones()
         save()
         push()
@@ -69,6 +73,7 @@ final class Store {
         clearedAt = Date().timeIntervalSince1970 * 1000
         picks = []
         removed = []
+        health.removeAll()
         save()
         push()
     }
