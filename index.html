@@ -1,0 +1,769 @@
+<title>Feels Finder</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Archivo:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#E9EBF0; --surface:#FAFBFC; --raise:#FFFFFF;
+  --ink:#13151B; --ink2:#4B5163; --ink3:#7B8295;
+  --line:#D6DAE3; --hair:#E7EAF0;
+  --accent:#2558D6; --pos:#2558D6; --neg:#C0394B; --mid:#8B90A0;
+  --wash:rgba(37,88,214,.09);
+  --serif:"Newsreader",Iowan Old Style,Georgia,serif;
+  --sans:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --shadow:0 -2px 24px -8px rgba(19,21,27,.18);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0B0D11; --surface:#14171E; --raise:#1B1F27;
+    --ink:#EDEFF4; --ink2:#A7AEBF; --ink3:#767D8F;
+    --line:#2A2F3A; --hair:#21262F;
+    --accent:#5286F2; --pos:#5286F2; --neg:#D35A6B; --mid:#6C7386;
+    --wash:rgba(82,134,242,.14);
+    --shadow:0 -2px 28px -6px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0B0D11; --surface:#14171E; --raise:#1B1F27;
+  --ink:#EDEFF4; --ink2:#A7AEBF; --ink3:#767D8F;
+  --line:#2A2F3A; --hair:#21262F;
+  --accent:#5286F2; --pos:#5286F2; --neg:#D35A6B; --mid:#6C7386;
+  --wash:rgba(82,134,242,.14);
+  --shadow:0 -2px 28px -6px rgba(0,0,0,.7);
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--sans);-webkit-text-size-adjust:100%;-webkit-tap-highlight-color:transparent}
+button{font-family:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.app{max-width:520px;margin-inline:auto;min-height:100dvh;display:flex;flex-direction:column;
+  background:var(--surface);border-inline:1px solid var(--hair)}
+@media (max-width:540px){.app{border-inline:0}}
+
+.topbar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  padding:14px 18px 12px;border-bottom:1px solid var(--hair)}
+.mark{font-family:var(--serif);font-style:italic;font-size:1.12rem;letter-spacing:.005em}
+.mark b{font-style:normal;font-weight:500}
+.tally{font-family:var(--mono);font-size:.7rem;color:var(--ink3);letter-spacing:.02em;font-variant-numeric:tabular-nums;text-align:right}
+
+main{flex:1;display:flex;flex-direction:column;min-height:0}
+.view{flex:1;display:none;flex-direction:column;min-height:0}
+.view.on{display:flex}
+
+/* ---------- check-in ---------- */
+.prompt{margin:0;padding:22px 20px 6px;font-family:var(--serif);font-size:1.02rem;color:var(--ink2)}
+.arena{flex:1;display:flex;flex-direction:column;min-height:0}
+.card{flex:1;min-height:132px;display:flex;flex-direction:column;justify-content:center;gap:7px;
+  padding:18px 20px 20px;text-align:left;background:none;border:0;
+  transition:background-color .18s ease}
+.card:active{background:var(--wash)}
+.card.chosen{background:var(--wash)}
+.card.chosen .feel{color:var(--accent)}
+.slot{font-family:var(--mono);font-size:.66rem;letter-spacing:.18em;color:var(--ink3)}
+.feel{font-family:var(--serif);font-weight:400;font-size:clamp(2.15rem,9.5vw,3.05rem);
+  line-height:1.02;letter-spacing:-.012em;text-wrap:balance;transition:color .18s ease}
+.gloss{font-size:.86rem;color:var(--ink3);line-height:1.35;max-width:30ch}
+.split{display:flex;align-items:center;gap:12px;padding:0 20px}
+.split::before,.split::after{content:"";flex:1;height:1px;background:var(--line)}
+.skip{background:none;border:0;padding:8px 2px;font-family:var(--mono);font-size:.64rem;
+  letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+.skip:hover{color:var(--ink2)}
+.hint{margin:0;padding:12px 20px 18px;font-family:var(--mono);font-size:.64rem;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--ink3);text-align:center}
+.fade{animation:in .26s ease}
+@keyframes in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+
+/* ---------- patterns ---------- */
+.scroll{flex:1;overflow-y:auto;padding:20px 20px 30px;display:flex;flex-direction:column;gap:30px}
+.eyebrow{font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin:0 0 4px}
+h2{font-family:var(--serif);font-weight:400;font-size:1.32rem;letter-spacing:-.01em;margin:0 0 3px}
+.sub{margin:0;font-size:.82rem;color:var(--ink3);line-height:1.45;max-width:58ch}
+.stats{display:grid;grid-template-columns:repeat(3,1fr)}
+.stat{padding:2px 12px}
+.stat:first-child{padding-left:0}
+.stat+.stat{border-left:1px solid var(--hair)}
+.stat .k{font-family:var(--mono);font-size:.6rem;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);display:block;margin-bottom:5px}
+.stat .v{font-family:var(--serif);font-size:1.62rem;line-height:1;font-variant-numeric:tabular-nums}
+.stat .u{font-size:.74rem;color:var(--ink3);margin-left:3px;font-family:var(--sans)}
+figure{margin:0}
+svg{display:block;width:100%;height:auto;max-width:100%;overflow:visible}
+.gridline{stroke:var(--hair);stroke-width:1}
+.axis{stroke:var(--line);stroke-width:1}
+.axlabel{font-family:var(--mono);font-size:7.6px;letter-spacing:.14em;fill:var(--ink3)}
+.dotlabel{font-family:var(--sans);font-size:9.4px;fill:var(--ink2)}
+.tick{font-family:var(--mono);font-size:7.6px;fill:var(--ink3);font-variant-numeric:tabular-nums}
+.hit{cursor:default}
+
+.rank{display:flex;flex-direction:column;gap:11px}
+.row{display:grid;grid-template-columns:16px 1fr auto;align-items:baseline;gap:10px}
+.row .n{font-family:var(--mono);font-size:.68rem;color:var(--ink3);font-variant-numeric:tabular-nums}
+.row .name{font-family:var(--serif);font-size:1.04rem}
+.row .meta{font-family:var(--mono);font-size:.64rem;color:var(--ink3);font-variant-numeric:tabular-nums}
+.track{grid-column:2/4;height:5px;border-radius:3px;background:var(--hair);overflow:hidden;margin-top:-4px}
+.track i{display:block;height:100%;border-radius:3px;background:var(--accent)}
+
+.log{display:flex;flex-direction:column;gap:0}
+.log li{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  padding:9px 0;border-bottom:1px solid var(--hair);font-size:.9rem}
+.log li:last-child{border-bottom:0}
+.log .w{font-family:var(--serif);font-size:1.02rem}
+.log .o{color:var(--ink3);font-size:.84rem}
+.log time{font-family:var(--mono);font-size:.64rem;color:var(--ink3);white-space:nowrap}
+ul{list-style:none;margin:0;padding:0}
+
+.foot{display:flex;flex-wrap:wrap;align-items:center;gap:14px;padding-top:4px;border-top:1px solid var(--hair)}
+.link{background:none;border:0;padding:6px 0;font-family:var(--mono);font-size:.64rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink3)}
+.link:hover{color:var(--accent)}
+.link.warn:hover{color:var(--neg)}
+.sync{font-family:var(--mono);font-size:.6rem;letter-spacing:.06em;color:var(--ink3);margin-left:auto}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;border-top:1px solid var(--line);background:var(--raise);
+  padding-bottom:env(safe-area-inset-bottom,0)}
+.tabs button{flex:1;background:none;border:0;border-top:2px solid transparent;margin-top:-1px;
+  padding:13px 0 15px;font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink3)}
+.tabs button[aria-selected="true"]{color:var(--accent);border-top-color:var(--accent)}
+
+/* ---------- reading sheet ---------- */
+.sheet{position:fixed;inset:0;display:flex;align-items:flex-end;justify-content:center;
+  background:rgba(11,13,17,.42);z-index:20;padding:0}
+.sheet[hidden]{display:none}
+.panel{width:100%;max-width:520px;background:var(--surface);border-top:1px solid var(--line);
+  border-radius:16px 16px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom,0));
+  box-shadow:var(--shadow);animation:up .3s cubic-bezier(.2,.8,.25,1)}
+@keyframes up{from{transform:translateY(18px);opacity:.4}to{transform:none;opacity:1}}
+.panel h3{font-family:var(--serif);font-weight:400;font-size:1.6rem;letter-spacing:-.012em;margin:4px 0 10px}
+.panel .say{margin:0 0 4px;font-size:.92rem;color:var(--ink2);line-height:1.5}
+.panel .say b{font-weight:500;color:var(--ink)}
+.scale{margin:18px 0 20px}
+.scale .bar{height:6px;border-radius:3px;position:relative;
+  background:linear-gradient(90deg,var(--neg),var(--mid) 50%,var(--pos))}
+.scale .pin{position:absolute;top:-4px;width:3px;height:14px;border-radius:2px;background:var(--ink);
+  transform:translateX(-50%);box-shadow:0 0 0 2px var(--surface)}
+.scale .ends{display:flex;justify-content:space-between;margin-top:6px;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.11em;text-transform:uppercase;color:var(--ink3)}
+.acts{display:flex;gap:10px}
+.btn{flex:1;padding:14px 16px;border-radius:10px;border:1px solid var(--line);background:none;
+  font-size:.92rem;font-weight:500}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.tip{position:fixed;z-index:30;pointer-events:none;background:var(--raise);color:var(--ink);
+  border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:.78rem;line-height:1.35;
+  box-shadow:0 8px 24px -12px rgba(0,0,0,.5);max-width:200px}
+.tip[hidden]{display:none}
+.tip .tn{font-family:var(--serif);font-size:.95rem}
+.tip .td{font-family:var(--mono);font-size:.66rem;color:var(--ink3);font-variant-numeric:tabular-nums}
+
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+<div class="app">
+  <header class="topbar">
+    <div class="mark">Feels <b>Finder</b></div>
+    <div class="tally" id="tally">no picks yet</div>
+  </header>
+
+  <main>
+    <section class="view on" id="v-checkin" aria-label="Check in">
+      <p class="prompt" id="prompt">Right now — which one is closer?</p>
+      <div class="arena" id="arena">
+        <button class="card" id="cardA" type="button">
+          <span class="slot">A</span>
+          <span class="feel"></span>
+          <span class="gloss"></span>
+        </button>
+        <div class="split"><button class="skip" id="skip" type="button">neither fits</button></div>
+        <button class="card" id="cardB" type="button">
+          <span class="slot">B</span>
+          <span class="feel"></span>
+          <span class="gloss"></span>
+        </button>
+      </div>
+      <p class="hint">tap one &middot; or press 1 / 2</p>
+    </section>
+
+    <section class="view" id="v-patterns" aria-label="Patterns">
+      <div class="scroll" id="patterns"></div>
+    </section>
+  </main>
+
+  <nav class="tabs" role="tablist">
+    <button role="tab" id="tab-checkin" aria-selected="true" type="button">Check in</button>
+    <button role="tab" id="tab-patterns" aria-selected="false" type="button">Patterns</button>
+  </nav>
+</div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Round reading"></div>
+</div>
+<div class="tip" id="tip" hidden></div>
+
+<script>
+"use strict";
+/* ---------------------------------------------------------------
+   Feelings: valence v (-1 unpleasant .. +1 pleasant),
+             arousal a (0 quiet .. 1 activated), after Russell's
+             circumplex model of affect. f = family, g = gloss.
+   --------------------------------------------------------------- */
+const FEELINGS = [
+  ["Excited",.80,.90,"Joy","keyed up, the good kind"],
+  ["Elated",.90,.80,"Joy","lifted clean off the ground"],
+  ["Playful",.75,.65,"Joy","up for a little mischief"],
+  ["Inspired",.80,.70,"Joy","wants to go make something"],
+  ["Proud",.70,.50,"Joy","did the thing, and it counted"],
+  ["Amused",.65,.55,"Joy","quietly laughing"],
+  ["Hopeful",.70,.45,"Joy","leaning toward the good outcome"],
+  ["Energized",.65,.85,"Joy","engine running warm"],
+  ["Content",.70,.20,"Calm","nothing missing"],
+  ["Peaceful",.75,.12,"Calm","still water"],
+  ["Grateful",.80,.35,"Calm","aware of what's here"],
+  ["Relieved",.60,.30,"Calm","the weight just left"],
+  ["Rested",.60,.15,"Calm","topped back up"],
+  ["Grounded",.65,.25,"Calm","feet on the floor"],
+  ["Safe",.70,.18,"Calm","no need to brace"],
+  ["Affectionate",.80,.40,"Connection","wants to be close"],
+  ["Tender",.70,.30,"Connection","soft toward someone"],
+  ["Connected",.80,.40,"Connection","in it with people"],
+  ["Seen",.75,.35,"Connection","someone got it right"],
+  ["Lonely",-.60,.40,"Connection","no one within reach"],
+  ["Left out",-.60,.45,"Connection","the room closed up"],
+  ["Focused",.50,.60,"Drive","one thing at a time"],
+  ["Determined",.50,.70,"Drive","not putting this down"],
+  ["Motivated",.60,.65,"Drive","ready to start"],
+  ["Restless",-.30,.70,"Drive","can't settle anywhere"],
+  ["Impatient",-.40,.65,"Drive","done with waiting"],
+  ["Curious",.50,.55,"Curiosity","wants to look closer"],
+  ["Intrigued",.50,.45,"Curiosity","something doesn't add up"],
+  ["Surprised",.10,.80,"Curiosity","didn't see it coming"],
+  ["Sad",-.70,.30,"Sadness","heavy and low"],
+  ["Down",-.55,.25,"Sadness","the floor dropped a little"],
+  ["Disappointed",-.60,.40,"Sadness","it wasn't what you hoped"],
+  ["Hurt",-.70,.50,"Sadness","something landed badly"],
+  ["Wistful",-.20,.28,"Sadness","sweet, and gone"],
+  ["Melancholy",-.40,.22,"Sadness","at home in the grey"],
+  ["Grieving",-.80,.40,"Sadness","carrying a loss"],
+  ["Numb",-.40,.10,"Sadness","the signal cut out"],
+  ["Empty",-.60,.15,"Sadness","hollow where it should be"],
+  ["Anxious",-.60,.80,"Fear","body ahead of the facts"],
+  ["Nervous",-.35,.70,"Fear","fluttering at the edges"],
+  ["Worried",-.50,.60,"Fear","running the bad branch"],
+  ["Tense",-.50,.70,"Fear","holding everything tight"],
+  ["Uneasy",-.40,.50,"Fear","something's off"],
+  ["Dread",-.80,.65,"Fear","waiting for the drop"],
+  ["Overwhelmed",-.70,.85,"Fear","too much, all at once"],
+  ["Irritated",-.45,.60,"Anger","everything is grating"],
+  ["Frustrated",-.60,.70,"Anger","blocked, and still pushing"],
+  ["Angry",-.70,.80,"Anger","heat with a direction"],
+  ["Resentful",-.60,.50,"Anger","keeping a tally"],
+  ["Defensive",-.50,.60,"Anger","shields up"],
+  ["Embarrassed",-.50,.60,"Self-judgment","wants to leave the room"],
+  ["Guilty",-.60,.45,"Self-judgment","owes someone something"],
+  ["Ashamed",-.70,.50,"Self-judgment","wrong all the way down"],
+  ["Insecure",-.60,.45,"Self-judgment","not sure you measure up"],
+  ["Self-critical",-.55,.50,"Self-judgment","narrating your own faults"],
+  ["Tired",-.30,.15,"Depletion","running on the reserve"],
+  ["Drained",-.50,.12,"Depletion","nothing left to give"],
+  ["Foggy",-.30,.20,"Depletion","thinking through gauze"],
+  ["Bored",-.40,.20,"Depletion","nothing to reach for"],
+  ["Flat",-.40,.15,"Depletion","the colour drained out"],
+  ["Burned out",-.70,.18,"Depletion","past tired, into empty"],
+  ["Confused",-.30,.45,"Uncertainty","pieces won't line up"],
+  ["Torn",-.35,.55,"Uncertainty","pulled both ways"],
+  ["Stuck",-.50,.40,"Uncertainty","no move looks right"],
+  ["Distracted",-.20,.50,"Uncertainty","attention keeps sliding"],
+  ["Longing",-.20,.45,"Uncertainty","reaching for what isn't here"],
+  ["Nostalgic",.20,.30,"Uncertainty","warm toward the past"]
+].map(function(r){
+  return {id:r[0].toLowerCase().replace(/[^a-z]+/g,"-"), n:r[0], v:r[1], a:r[2], f:r[3], g:r[4]};
+});
+const BY_ID = {};
+FEELINGS.forEach(function(f){ BY_ID[f.id] = f; });
+
+/* ---------------------------------------------------------------
+   State: days = { "2026-09-24": [ {t, w, l}, ... ] }
+   Everything shown is derived from that log, so merging devices is
+   just a union of picks.
+   --------------------------------------------------------------- */
+const LS = "feelsfinder.v1";
+let days = Object.create(null);
+let sessionPicks = [];
+let recent = [];
+let pair = null;
+let busy = false;
+
+const $ = function(s){ return document.querySelector(s); };
+const esc = function(s){ return String(s).replace(/[&<>"]/g, function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); };
+const dayKey = function(ms){
+  const d = new Date(ms);
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+};
+const sig = function(p){ return p.t + ":" + p.w; };
+
+function loadLocal(){
+  try{
+    const raw = localStorage.getItem(LS);
+    if(raw){
+      const o = JSON.parse(raw);
+      if(o && o.days) days = o.days;
+    }
+  }catch(e){ /* private mode, cleared storage: start empty */ }
+}
+function saveLocal(){
+  try{ localStorage.setItem(LS, JSON.stringify({v:1, days:days})); }catch(e){}
+}
+
+function allPicks(){
+  const out = [];
+  Object.keys(days).sort().forEach(function(d){
+    (days[d]||[]).forEach(function(p){ if(BY_ID[p.w] && BY_ID[p.l]) out.push(p); });
+  });
+  out.sort(function(a,b){ return a.t - b.t; });
+  return out;
+}
+
+/* Pairwise choices give a ranking: Elo, replayed over the whole log. */
+const K = 26;
+function derive(){
+  const s = {};
+  FEELINGS.forEach(function(f){ s[f.id] = {elo:1500, won:0, shown:0}; });
+  const picks = allPicks();
+  picks.forEach(function(p){
+    const w = s[p.w], l = s[p.l];
+    const exp = 1 / (1 + Math.pow(10, (l.elo - w.elo) / 400));
+    w.elo += K * (1 - exp); l.elo -= K * (1 - exp);
+    w.won++; w.shown++; l.shown++;
+  });
+  return {picks:picks, s:s};
+}
+
+function streak(){
+  let n = 0;
+  const d = new Date();
+  if(!(days[dayKey(d.getTime())]||[]).length) d.setDate(d.getDate()-1);
+  for(;;){
+    const k = dayKey(d.getTime());
+    if((days[k]||[]).length){ n++; d.setDate(d.getDate()-1); } else break;
+  }
+  return n;
+}
+
+/* --------------------------- pairing --------------------------- */
+function nextPair(st){
+  const pool = FEELINGS.filter(function(f){ return recent.indexOf(f.id) === -1; });
+  const seen = function(f){ return st.s[f.id].shown; };
+  const min = Math.min.apply(null, pool.map(seen));
+  const freshest = pool.filter(function(f){ return seen(f) <= min + 1; });
+  const a = freshest[Math.floor(Math.random()*freshest.length)];
+
+  const crossValence = Math.random() < .3;
+  let cands = pool.filter(function(f){
+    if(f.id === a.id || f.f === a.f) return false;
+    if(crossValence) return (f.v > 0) !== (a.v > 0);
+    return true;
+  });
+  if(!cands.length) cands = pool.filter(function(f){ return f.id !== a.id; });
+  if(!crossValence){
+    cands.sort(function(x,y){
+      return Math.abs(st.s[x.id].elo - st.s[a.id].elo) - Math.abs(st.s[y.id].elo - st.s[a.id].elo);
+    });
+    cands = cands.slice(0, 14);
+  }
+  const b = cands[Math.floor(Math.random()*cands.length)];
+  recent = recent.concat([a.id, b.id]).slice(-12);
+  return Math.random() < .5 ? [a, b] : [b, a];
+}
+
+function paintPair(animate){
+  const st = derive();
+  pair = nextPair(st);
+  [["#cardA",0],["#cardB",1]].forEach(function(x){
+    const card = $(x[0]), f = pair[x[1]];
+    card.classList.remove("chosen");
+    card.querySelector(".feel").textContent = f.n;
+    card.querySelector(".gloss").textContent = f.g;
+    card.setAttribute("aria-label", f.n + " — " + f.g);
+    if(animate){ card.classList.remove("fade"); void card.offsetWidth; card.classList.add("fade"); }
+  });
+}
+
+function choose(i){
+  if(busy || !pair) return;
+  busy = true;
+  const win = pair[i], lose = pair[1-i];
+  $(i === 0 ? "#cardA" : "#cardB").classList.add("chosen");
+  const now = Date.now(), k = dayKey(now);
+  const p = {t:now, w:win.id, l:lose.id};
+  (days[k] = days[k] || []).push(p);
+  sessionPicks.push(p);
+  saveLocal(); queueSync(k); paintTally();
+
+  setTimeout(function(){
+    busy = false;
+    if(sessionPicks.length % 7 === 0) showReading();
+    paintPair(true);
+    if($("#v-patterns").classList.contains("on")) paintPatterns();
+  }, 260);
+}
+
+/* --------------------------- header --------------------------- */
+function paintTally(){
+  const picks = allPicks(), s = streak();
+  $("#tally").textContent = picks.length
+    ? picks.length + (picks.length === 1 ? " pick" : " picks") + (s ? " · " + s + "-day streak" : "")
+    : "no picks yet";
+}
+
+/* --------------------------- charts --------------------------- */
+const VW = 320, VH = 296, PX = 32, PY = 26;
+const cxOf = function(v){ return PX + (v + 1) / 2 * (VW - 2*PX); };
+const cyOf = function(a){ return (VH - PY) - a * (VH - 2*PY); };
+const hueOf = function(v){ return v > .12 ? "var(--pos)" : v < -.12 ? "var(--neg)" : "var(--mid)"; };
+
+function circumplex(st){
+  const counts = {}; let max = 0;
+  FEELINGS.forEach(function(f){
+    const c = st.s[f.id].won; counts[f.id] = c; if(c > max) max = c;
+  });
+  const cx = cxOf(0), cy = cyOf(.5);
+  let g = "";
+  g += '<line class="gridline" x1="'+cx+'" y1="'+PY+'" x2="'+cx+'" y2="'+(VH-PY)+'"/>';
+  g += '<line class="gridline" x1="'+PX+'" y1="'+cy+'" x2="'+(VW-PX)+'" y2="'+cy+'"/>';
+  g += '<rect x="'+PX+'" y="'+PY+'" width="'+(VW-2*PX)+'" height="'+(VH-2*PY)+'" fill="none" class="axis"/>';
+  g += '<text class="axlabel" x="'+cx+'" y="'+(PY-9)+'" text-anchor="middle">ACTIVATED</text>';
+  g += '<text class="axlabel" x="'+cx+'" y="'+(VH-PY+16)+'" text-anchor="middle">QUIET</text>';
+  g += '<text class="axlabel" transform="rotate(-90 '+(PX-13)+' '+cy+')" x="'+(PX-13)+'" y="'+cy+'" text-anchor="middle">UNPLEASANT</text>';
+  g += '<text class="axlabel" transform="rotate(90 '+(VW-PX+13)+' '+cy+')" x="'+(VW-PX+13)+'" y="'+cy+'" text-anchor="middle">PLEASANT</text>';
+
+  // the whole field, faint: the map exists before you fill it in
+  FEELINGS.forEach(function(f){
+    if(counts[f.id]) return;
+    g += '<circle cx="'+cxOf(f.v).toFixed(1)+'" cy="'+cyOf(f.a).toFixed(1)+'" r="1.7" fill="var(--ink3)" opacity=".34"/>';
+  });
+  // what you actually chose, sized by how often
+  const chosen = FEELINGS.filter(function(f){ return counts[f.id]; })
+    .sort(function(x,y){ return counts[y.id] - counts[x.id]; });
+  chosen.slice().reverse().forEach(function(f){
+    const r = (3 + Math.sqrt(counts[f.id] / Math.max(1,max)) * 7.5).toFixed(1);
+    g += '<circle class="hit" cx="'+cxOf(f.v).toFixed(1)+'" cy="'+cyOf(f.a).toFixed(1)+'" r="'+r+'"'
+      + ' fill="'+hueOf(f.v)+'" fill-opacity=".85" stroke="var(--surface)" stroke-width="2"'
+      + ' data-tip="'+esc(f.n)+'|chosen '+counts[f.id]+'× · '+f.f.toLowerCase()+'"/>';
+  });
+  chosen.slice(0,5).forEach(function(f){
+    const x = cxOf(f.v), y = cyOf(f.a);
+    const r = 3 + Math.sqrt(counts[f.id] / Math.max(1,max)) * 7.5;
+    const right = x < VW - PX - 62;
+    g += '<text class="dotlabel" x="'+((right ? x + r + 4 : x - r - 4)).toFixed(1)+'" y="'+(y + 3.3).toFixed(1)
+      + '" text-anchor="'+(right ? "start" : "end")+'">'+esc(f.n)+'</text>';
+  });
+  return '<svg viewBox="0 0 '+VW+' '+VH+'" role="img" aria-label="Your feelings plotted by how pleasant and how activated they are">'+g+'</svg>';
+}
+
+function barPath(x, w, y0, y1, r){
+  const h = Math.abs(y0 - y1);
+  if(h < .6) return "";
+  const rr = Math.min(r, w/2, h);
+  const up = y1 < y0;
+  return up
+    ? "M"+x+" "+y0+" L"+x+" "+(y1+rr)+" Q"+x+" "+y1+" "+(x+rr)+" "+y1+" L"+(x+w-rr)+" "+y1+" Q"+(x+w)+" "+y1+" "+(x+w)+" "+(y1+rr)+" L"+(x+w)+" "+y0+" Z"
+    : "M"+x+" "+y0+" L"+x+" "+(y1-rr)+" Q"+x+" "+y1+" "+(x+rr)+" "+y1+" L"+(x+w-rr)+" "+y1+" Q"+(x+w)+" "+y1+" "+(x+w)+" "+(y1-rr)+" L"+(x+w)+" "+y0+" Z";
+}
+
+function trend(){
+  const N = 14, W = 320, H = 150, L = 26, R = 8, T = 14, B = 22;
+  const base = T + (H - T - B) / 2, half = (H - T - B) / 2;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const cells = [];
+  for(let i = N - 1; i >= 0; i--){
+    const d = new Date(today.getTime() - i * 86400000);
+    const k = dayKey(d.getTime());
+    const list = days[k] || [];
+    let v = null;
+    if(list.length){
+      v = list.reduce(function(s,p){ return s + BY_ID[p.w].v; }, 0) / list.length;
+    }
+    cells.push({k:k, d:d, v:v, n:list.length});
+  }
+  const slot = (W - L - R) / N, bw = Math.min(14, slot - 4);
+  let g = "";
+  [1, 0, -1].forEach(function(t){
+    const y = base - t * half;
+    g += '<line class="'+(t === 0 ? "axis" : "gridline")+'" x1="'+L+'" y1="'+y+'" x2="'+(W-R)+'" y2="'+y+'"/>';
+    g += '<text class="tick" x="'+(L-6)+'" y="'+(y+2.8)+'" text-anchor="end">'+(t > 0 ? "+1" : t < 0 ? "−1" : "0")+'</text>';
+  });
+  cells.forEach(function(c, i){
+    const x = L + i * slot + (slot - bw) / 2;
+    if(c.v === null) return;
+    const y = base - c.v * half;
+    g += '<path class="hit" d="'+barPath(x, bw, base, y, 4)+'" fill="'+hueOf(c.v)+'" fill-opacity=".9"'
+      + ' data-tip="'+esc(c.d.toLocaleDateString(undefined,{month:"short",day:"numeric"}))
+      + '|' + (c.v >= 0 ? "+" : "−") + Math.abs(c.v).toFixed(2) + ' · ' + c.n + ' pick' + (c.n === 1 ? "" : "s") + '"/>';
+  });
+  const first = cells[0].d, last = cells[N-1].d;
+  const fmt = function(d){ return d.toLocaleDateString(undefined,{month:"short",day:"numeric"}); };
+  g += '<text class="tick" x="'+L+'" y="'+(H-6)+'">'+esc(fmt(first))+'</text>';
+  g += '<text class="tick" x="'+(W-R)+'" y="'+(H-6)+'" text-anchor="end">today</text>';
+  return '<svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="Average pleasantness of the feelings you chose, by day, over the last two weeks">'+g+'</svg>';
+}
+
+/* --------------------------- patterns --------------------------- */
+function ago(ms){
+  const s = Math.max(0, (Date.now() - ms) / 1000);
+  if(s < 90) return "just now";
+  if(s < 3600) return Math.round(s/60) + "m ago";
+  if(s < 86400) return Math.round(s/3600) + "h ago";
+  const d = Math.round(s/86400);
+  return d + (d === 1 ? " day ago" : " days ago");
+}
+
+function paintPatterns(){
+  const st = derive(), picks = st.picks;
+  const el = $("#patterns");
+  const totalDays = Object.keys(days).filter(function(k){ return (days[k]||[]).length; }).length;
+  const avgV = picks.length ? picks.reduce(function(s,p){ return s + BY_ID[p.w].v; }, 0) / picks.length : 0;
+
+  let h = "";
+  h += '<section><p class="eyebrow">Since you started</p>'
+    +  '<div class="stats">'
+    +  '<div class="stat"><span class="k">Picks</span><span class="v">'+picks.length+'</span></div>'
+    +  '<div class="stat"><span class="k">Days logged</span><span class="v">'+totalDays+'</span></div>'
+    +  '<div class="stat"><span class="k">Streak</span><span class="v">'+streak()+'<span class="u">days</span></span></div>'
+    +  '</div></section>';
+
+  h += '<section><p class="eyebrow">Your map</p><h2>Where your feelings sit</h2>'
+    +  '<p class="sub">'
+    + (picks.length
+        ? 'Every feeling you have chosen, placed by how pleasant it is and how much energy it carries. Bigger means chosen more often.'
+        : 'The faint dots are the whole vocabulary. Each one you choose fills in and grows.')
+    +  '</p><figure>'+circumplex(st)+'</figure></section>';
+
+  if(picks.length){
+    const ranked = FEELINGS.filter(function(f){ return st.s[f.id].shown >= 2; })
+      .sort(function(x,y){ return st.s[y.id].elo - st.s[x.id].elo; }).slice(0,8);
+    if(ranked.length){
+      const lo = st.s[ranked[ranked.length-1].id].elo, hi = st.s[ranked[0].id].elo;
+      h += '<section><p class="eyebrow">Strongest pull</p><h2>What keeps winning</h2>'
+        +  '<p class="sub">Ranked by how often each feeling beat the feelings it was put against — not just by raw count.</p>'
+        +  '<div class="rank" style="margin-top:14px">';
+      ranked.forEach(function(f, i){
+        const s = st.s[f.id];
+        const w = hi > lo ? 6 + (s.elo - lo) / (hi - lo) * 94 : 100;
+        h += '<div class="row"><span class="n">'+(i+1)+'</span>'
+          +  '<span class="name">'+esc(f.n)+'</span>'
+          +  '<span class="meta">'+s.won+'/'+s.shown+'</span>'
+          +  '<span class="track"><i style="width:'+w.toFixed(1)+'%"></i></span></div>';
+      });
+      h += '</div></section>';
+    }
+
+    const fam = {};
+    picks.forEach(function(p){ const k = BY_ID[p.w].f; fam[k] = (fam[k]||0) + 1; });
+    const fams = Object.keys(fam).sort(function(a,b){ return fam[b]-fam[a]; }).slice(0,5);
+    h += '<section><p class="eyebrow">Families</p><h2>Which register you live in</h2><div class="rank" style="margin-top:14px">';
+    fams.forEach(function(k){
+      const pct = fam[k] / picks.length * 100;
+      h += '<div class="row"><span class="n"></span><span class="name">'+esc(k)+'</span>'
+        +  '<span class="meta">'+pct.toFixed(0)+'%</span>'
+        +  '<span class="track"><i style="width:'+pct.toFixed(1)+'%"></i></span></div>';
+    });
+    h += '</div></section>';
+
+    h += '<section><p class="eyebrow">Two weeks</p><h2>Pleasantness, day by day</h2>'
+      +  '<p class="sub">The average pleasantness of the feelings you chose each day. Overall you sit at '
+      +  '<strong>'+(avgV >= 0 ? "+" : "−") + Math.abs(avgV).toFixed(2)+'</strong>.</p>'
+      +  '<figure>'+trend()+'</figure></section>';
+
+    const last = picks.slice(-8).reverse();
+    h += '<section><p class="eyebrow">Recent</p><h2>Your last few calls</h2><ul class="log">';
+    last.forEach(function(p){
+      h += '<li><span><span class="w">'+esc(BY_ID[p.w].n)+'</span> <span class="o">over '+esc(BY_ID[p.l].n)+'</span></span>'
+        +  '<time>'+ago(p.t)+'</time></li>';
+    });
+    h += '</ul></section>';
+  } else {
+    h += '<section><p class="sub">Make a few picks and this fills with a ranking, a two-week trend, and the families you spend the most time in.</p></section>';
+  }
+
+  h += '<div class="foot">'
+    +  '<button class="link" id="export" type="button" hidden>Export CSV</button>'
+    +  '<button class="link warn" id="wipe" type="button">Clear my data</button>'
+    +  '<span class="sync" id="sync">'+esc(syncNote)+'</span></div>';
+
+  el.innerHTML = h;
+  $("#wipe").addEventListener("click", wipe);
+  if(downloads){
+    const b = $("#export"); b.hidden = false; b.addEventListener("click", exportCsv);
+  }
+}
+
+/* --------------------------- reading --------------------------- */
+function showReading(){
+  const n = 7, r = sessionPicks.slice(-n);
+  const v = r.reduce(function(s,p){ return s + BY_ID[p.w].v; }, 0) / n;
+  const a = r.reduce(function(s,p){ return s + BY_ID[p.w].a; }, 0) / n;
+  const fam = {}; r.forEach(function(p){ const k = BY_ID[p.w].f; fam[k] = (fam[k]||0)+1; });
+  const top = Object.keys(fam).sort(function(x,y){ return fam[y]-fam[x]; })[0];
+  const cnt = {}; r.forEach(function(p){ cnt[p.w] = (cnt[p.w]||0)+1; });
+  const win = Object.keys(cnt).sort(function(x,y){ return cnt[y]-cnt[x]; })[0];
+
+  const vWord = v >= .45 ? "clearly pleasant" : v >= .15 ? "leaning pleasant"
+    : v > -.15 ? "genuinely mixed" : v > -.45 ? "leaning unpleasant" : "clearly unpleasant";
+  const aWord = a >= .62 ? "and activated — a lot of energy in it"
+    : a >= .35 ? "at middling energy" : "and quiet — low energy";
+
+  $("#panel").innerHTML =
+      '<p class="eyebrow">Reading · '+n+' picks · '+esc(top.toLowerCase())+'</p>'
+    + '<h3>'+esc(vWord.charAt(0).toUpperCase() + vWord.slice(1))+'</h3>'
+    + '<p class="say">This round read as <b>'+esc(vWord)+'</b> '+esc(aWord)+'.</p>'
+    + '<p class="say">Strongest pull: <b>'+esc(BY_ID[win].n)+'</b>'
+      + (cnt[win] > 1 ? ' — chosen '+cnt[win]+' times' : '') + '.</p>'
+    + '<div class="scale"><div class="bar"><span class="pin" style="left:'+((v+1)/2*100).toFixed(1)+'%"></span></div>'
+      + '<div class="ends"><span>unpleasant</span><span>pleasant</span></div></div>'
+    + '<div class="acts"><button class="btn primary" id="go" type="button">Keep going</button>'
+      + '<button class="btn" id="see" type="button">See patterns</button></div>';
+  $("#sheet").hidden = false;
+  $("#go").addEventListener("click", function(){ $("#sheet").hidden = true; });
+  $("#see").addEventListener("click", function(){ $("#sheet").hidden = true; show("patterns"); });
+  $("#go").focus();
+}
+
+/* --------------------------- tabs --------------------------- */
+function show(which){
+  const c = which === "checkin";
+  $("#v-checkin").classList.toggle("on", c);
+  $("#v-patterns").classList.toggle("on", !c);
+  $("#tab-checkin").setAttribute("aria-selected", String(c));
+  $("#tab-patterns").setAttribute("aria-selected", String(!c));
+  if(!c) paintPatterns();
+}
+
+/* --------------------------- export / wipe --------------------------- */
+function exportCsv(){
+  const rows = [["timestamp","chosen","over","chosen_valence","chosen_arousal","family"]];
+  allPicks().forEach(function(p){
+    const w = BY_ID[p.w];
+    rows.push([new Date(p.t).toISOString(), w.n, BY_ID[p.l].n, w.v, w.a, w.f]);
+  });
+  const csv = rows.map(function(r){ return r.join(","); }).join("\n");
+  downloads.save({filename:"feels-finder.csv", data:csv}).catch(function(){});
+}
+function wipe(){
+  if(!confirm("Delete every pick you have made? This cannot be undone.")) return;
+  const keys = Object.keys(days);
+  days = Object.create(null); sessionPicks = [];
+  saveLocal(); paintTally(); paintPatterns();
+  if(col){ keys.forEach(function(k){ col.doc("d"+k).delete().catch(function(){}); }); }
+}
+
+/* --------------------------- tooltips --------------------------- */
+(function(){
+  const tip = $("#tip");
+  function place(e, txt){
+    const parts = txt.split("|");
+    tip.innerHTML = '<span class="tn">'+esc(parts[0])+'</span><br><span class="td">'+esc(parts[1]||"")+'</span>';
+    tip.hidden = false;
+    const r = tip.getBoundingClientRect();
+    let x = e.clientX + 12, y = e.clientY - r.height - 10;
+    if(x + r.width > innerWidth - 8) x = e.clientX - r.width - 12;
+    if(y < 8) y = e.clientY + 14;
+    tip.style.left = Math.max(8, x) + "px";
+    tip.style.top = y + "px";
+  }
+  document.addEventListener("pointermove", function(e){
+    const t = e.target.closest ? e.target.closest("[data-tip]") : null;
+    if(t) place(e, t.getAttribute("data-tip")); else tip.hidden = true;
+  });
+  document.addEventListener("pointerdown", function(e){
+    const t = e.target.closest ? e.target.closest("[data-tip]") : null;
+    if(t) place(e, t.getAttribute("data-tip"));
+  });
+  document.addEventListener("scroll", function(){ tip.hidden = true; }, true);
+})();
+
+/* --------------------------- sync --------------------------- */
+let col = null, downloads = null, syncNote = "saved on this device";
+let pendingDays = new Set(), syncTimer = null, writing = false;
+
+function queueSync(k){
+  if(!col) return;
+  pendingDays.add(k);
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(flushSync, 1200);
+}
+async function flushSync(){
+  if(writing || !col) return;
+  writing = true;
+  try{
+    const list = Array.from(pendingDays); pendingDays.clear();
+    for(const k of list){
+      await col.doc("d"+k).set({date:k, picks:days[k] || []});
+    }
+    setSync("synced to your account");
+  }catch(err){
+    setSync(err && err.code === "revoked" ? "saved on this device" : "saved on this device · sync failed");
+  }finally{
+    writing = false;
+    if(pendingDays.size){ clearTimeout(syncTimer); syncTimer = setTimeout(flushSync, 1500); }
+  }
+}
+function setSync(t){
+  syncNote = t;
+  const el = document.getElementById("sync");
+  if(el) el.textContent = t;
+}
+
+(async function(){
+  if(!window.claude || !window.claude.use) return;
+  try{ downloads = await window.claude.use("downloads"); }catch(e){}
+  let db = null, user = null;
+  try{ db = await window.claude.use("db"); user = await window.claude.use("user"); }catch(e){}
+  let uid = null;
+  if(user){ try{ uid = await user.id(); }catch(e){} }
+  if(db && uid){
+    col = db.collection("data/users/" + uid);
+    try{
+      const snap = await col.get();
+      let added = 0;
+      snap.docs.forEach(function(doc){
+        const d = doc.data() || {};
+        if(!d.date || !Array.isArray(d.picks)) return;
+        const seen = new Set((days[d.date] || []).map(sig));
+        const fresh = d.picks.filter(function(p){ return p && p.w && p.l && !seen.has(sig(p)); });
+        if(fresh.length){
+          days[d.date] = (days[d.date] || []).concat(fresh).sort(function(a,b){ return a.t - b.t; });
+          added += fresh.length;
+        }
+      });
+      const remoteDays = new Set(snap.docs.map(function(d){ return (d.data()||{}).date; }));
+      if(added){ saveLocal(); paintTally(); recent = []; paintPair(false); }
+      setSync("synced to your account");
+      // push anything this device logged while offline / before signing in
+      Object.keys(days).forEach(function(k){
+        if(!remoteDays.has(k) && (days[k]||[]).length) queueSync(k);
+      });
+      if(document.getElementById("patterns").children.length) paintPatterns();
+    }catch(err){ setSync("saved on this device"); }
+  }
+  if(document.getElementById("export") && downloads) paintPatterns();
+})();
+
+/* --------------------------- boot --------------------------- */
+loadLocal();
+paintTally();
+paintPair(false);
+$("#cardA").addEventListener("click", function(){ choose(0); });
+$("#cardB").addEventListener("click", function(){ choose(1); });
+$("#skip").addEventListener("click", function(){ if(!busy) paintPair(true); });
+$("#tab-checkin").addEventListener("click", function(){ show("checkin"); });
+$("#tab-patterns").addEventListener("click", function(){ show("patterns"); });
+$("#sheet").addEventListener("click", function(e){ if(e.target === $("#sheet")) $("#sheet").hidden = true; });
+addEventListener("keydown", function(e){
+  if(!$("#sheet").hidden){ if(e.key === "Escape") $("#sheet").hidden = true; return; }
+  if(!$("#v-checkin").classList.contains("on")) return;
+  if(e.key === "1" || e.key === "ArrowUp" || e.key === "a") choose(0);
+  else if(e.key === "2" || e.key === "ArrowDown" || e.key === "b") choose(1);
+  else if(e.key === "n" && !busy) paintPair(true);
+});
+</script>
