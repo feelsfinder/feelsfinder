@@ -18,9 +18,12 @@ targets:
     sources:
       - path: Sources
       - path: Resources
+    dependencies:
+      - target: FeelsFinderWidget
     entitlements:
       path: Resources/FeelsFinder.entitlements
       properties:
+        com.apple.security.application-groups: [group.com.brianhubbell.FeelsFinder]
         com.apple.developer.ubiquity-kvstore-identifier: $(TeamIdentifierPrefix)$(CFBundleIdentifier)
         com.apple.developer.healthkit: true
     settings:
@@ -40,4 +43,34 @@ targets:
         # zlib only, no cryptography — stops the export-compliance prompt on every upload
         INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
         SWIFT_ACTIVE_COMPILATION_CONDITIONS: ICLOUD_BACKUP
+        ENABLE_USER_SCRIPT_SANDBOXING: YES
+  FeelsFinderWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Widget
+      - path: Sources/Model/Pick.swift
+      - path: Sources/Model/Feeling.swift
+      - path: Sources/Model/Stats.swift
+      - path: Sources/Model/Pairer.swift
+      - path: Sources/Model/Shared.swift
+      - path: Sources/Design/Palette.swift
+    entitlements:
+      path: Widget/FeelsFinderWidget.entitlements
+      properties:
+        com.apple.security.application-groups: [group.com.brianhubbell.FeelsFinder]
+    info:
+      path: Widget/Info.plist
+      properties:
+        CFBundleDisplayName: Feels Finder
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.brianhubbell.FeelsFinder.Widget
+        PRODUCT_NAME: FeelsFinderWidget
+        TARGETED_DEVICE_FAMILY: "1"
+        INFOPLIST_KEY_ITSAppUsesNonExemptEncryption: NO
         ENABLE_USER_SCRIPT_SANDBOXING: YES

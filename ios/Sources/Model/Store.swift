@@ -1,18 +1,6 @@
 import Foundation
 import Observation
-
-/// One forced choice: `w` beat `l` at time `t` (ms since epoch, so the
-/// file interchanges with the web version's export).
-struct Pick: Codable, Hashable, Identifiable {
-    let t: Double
-    let w: String
-    let l: String
-
-    var id: String { "\(t):\(w):\(l)" }
-    var date: Date { Date(timeIntervalSince1970: t / 1000) }
-    var winner: Feeling? { Vocabulary.named(w) }
-    var loser: Feeling? { Vocabulary.named(l) }
-}
+import WidgetKit
 
 @Observable
 final class Store {
@@ -38,6 +26,8 @@ final class Store {
 
     init() {
         load()
+        if SharedLog.read().isEmpty, !picks.isEmpty { save() }
+        takeFromWidget()
         connectToCloud()
     }
 
@@ -69,6 +59,23 @@ final class Store {
         push()
     }
 
+    /// Picks made on the widget wait in the inbox. They keep the time they
+    /// were made, so the log and Health date them correctly.
+    func takeFromWidget() {
+        let waiting = Inbox.take()
+        guard !waiting.isEmpty else { return }
+        let known = Set(picks.map(\.id))
+        let fresh = waiting.filter { !known.contains($0.id) && !removed.contains($0.id) }
+        picks = (picks + fresh).sorted { $0.t < $1.t }
+        for (t, group) in Dictionary(grouping: fresh, by: \.t) {
+            if let win = group.first?.winner {
+                health.write(at: t, win: win, over: group.compactMap(\.loser))
+            }
+        }
+        save()
+        push()
+    }
+
     func clear() {
         clearedAt = Date().timeIntervalSince1970 * 1000
         picks = []
@@ -95,6 +102,11 @@ final class Store {
     private func save() {
         guard let data = try? JSONEncoder().encode(snapshot) else { return }
         try? data.write(to: url, options: .atomic)
+
+        if let shared = SharedLog.url, let data = try? JSONEncoder().encode(picks) {
+            try? data.write(to: shared, options: .atomic)
+            WidgetCenter.shared.reloadAllTimelines()
+        }
     }
 
     private var snapshot: CloudBackup.Snapshot {

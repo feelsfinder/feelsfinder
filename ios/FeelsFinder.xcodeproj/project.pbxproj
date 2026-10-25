@@ -7,21 +7,55 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04E348AC74434C511A91FA6D /* Pairer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A8734DE5259C03953E075CE /* Pairer.swift */; };
+		086766B49A7FD30CAD07990F /* FeelsFinderWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A2CE2ADEAF8D0530A44640D9 /* FeelsFinderWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		1084DAD08AE2A61540E80E03 /* FeelsFinderApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76D63018D8ADC2D6728809F3 /* FeelsFinderApp.swift */; };
 		1FE4C1B928A2C320D9F8C701 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9680142FB820B4136B7E2BD1 /* Assets.xcassets */; };
 		29EC4B113A708C83B77AA7E3 /* Feeling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFD0FA49974C610365CF634 /* Feeling.swift */; };
+		32571A75353BD610652B5F16 /* Feeling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EFD0FA49974C610365CF634 /* Feeling.swift */; };
+		3336B15CC53ED3D50D0E3E6E /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9A45596C0D8274CF52C2C2 /* Shared.swift */; };
+		4245A6B73A328ABCFFF2B8AC /* FeelsFinderWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CFAF64F7EA10F54D135B140 /* FeelsFinderWidget.swift */; };
 		46378A2F8F082E87A7DBCFCF /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 923E423D20B080F05FE61D27 /* RootView.swift */; };
+		596E45940B6EE129B8FDD2DA /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE62FB4880F4B4AB135AB798 /* Palette.swift */; };
+		623D78D3060328BBF9528525 /* Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9A45596C0D8274CF52C2C2 /* Shared.swift */; };
+		6A2BEB95DBEA048108C920E2 /* Pick.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FEDD48BD3C7AA36F9E31A1 /* Pick.swift */; };
 		71FD334F688A6D210A45935A /* PatternsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2ADFBB946641A02B51E53012 /* PatternsView.swift */; };
 		7E0BAE2B64A8E3A5A460B790 /* CloudBackup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CE6F9005E3A511B323E4023 /* CloudBackup.swift */; };
 		801B11D77B082A0233D93422 /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 294EF2D8FFE0890BE48898E0 /* Stats.swift */; };
 		9AED4A5A56E97B4F3BE4FE6B /* ReadingSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3476AD40E1BD21225CE833 /* ReadingSheet.swift */; };
 		9DFB6690E62E56F8A90D66B9 /* CheckInView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F98FFD9D966AFB9E7EE626F0 /* CheckInView.swift */; };
+		9E2C2CF2EE9B58E2F51933C5 /* Pick.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6FEDD48BD3C7AA36F9E31A1 /* Pick.swift */; };
 		A96DBBB91F1D7E41E2988118 /* Pairer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A8734DE5259C03953E075CE /* Pairer.swift */; };
 		B11EA88057813E6EF9D53479 /* Palette.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE62FB4880F4B4AB135AB798 /* Palette.swift */; };
+		D0F50E215E23A5EC03B89849 /* Stats.swift in Sources */ = {isa = PBXBuildFile; fileRef = 294EF2D8FFE0890BE48898E0 /* Stats.swift */; };
 		D534669EA1ACB880C1D06BEA /* Store.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B352644B03444DB7222FA47 /* Store.swift */; };
 		F4B769CF351BA1230F28D154 /* CircumplexView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DE76298683B4C63B385ED21 /* CircumplexView.swift */; };
 		F9557A8927C8E344FA832ACD /* HealthExport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37DE0194904F1852B74B2075 /* HealthExport.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		855B87BD2F031C08841F97FF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = EA69D9284335EE98B1A21B4F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E8855105FF0E429B0A2F7096;
+			remoteInfo = FeelsFinderWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		2DBA810C4579852A1CF37536 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				086766B49A7FD30CAD07990F /* FeelsFinderWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0B352644B03444DB7222FA47 /* Store.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Store.swift; sourceTree = "<group>"; };
@@ -29,6 +63,7 @@
 		294EF2D8FFE0890BE48898E0 /* Stats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Stats.swift; sourceTree = "<group>"; };
 		2ADFBB946641A02B51E53012 /* PatternsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternsView.swift; sourceTree = "<group>"; };
 		2CE6F9005E3A511B323E4023 /* CloudBackup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudBackup.swift; sourceTree = "<group>"; };
+		2CFAF64F7EA10F54D135B140 /* FeelsFinderWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeelsFinderWidget.swift; sourceTree = "<group>"; };
 		37DE0194904F1852B74B2075 /* HealthExport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthExport.swift; sourceTree = "<group>"; };
 		3EFD0FA49974C610365CF634 /* Feeling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feeling.swift; sourceTree = "<group>"; };
 		4D3476AD40E1BD21225CE833 /* ReadingSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadingSheet.swift; sourceTree = "<group>"; };
@@ -38,7 +73,12 @@
 		923E423D20B080F05FE61D27 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		95ABF588D0D7BF071D170C42 /* FeelsFinder.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FeelsFinder.entitlements; sourceTree = "<group>"; };
 		9680142FB820B4136B7E2BD1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A2CE2ADEAF8D0530A44640D9 /* FeelsFinderWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = FeelsFinderWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C044C7F182CDEA4A483C9B27 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		C6FEDD48BD3C7AA36F9E31A1 /* Pick.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pick.swift; sourceTree = "<group>"; };
+		CD9A45596C0D8274CF52C2C2 /* Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared.swift; sourceTree = "<group>"; };
 		CE62FB4880F4B4AB135AB798 /* Palette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Palette.swift; sourceTree = "<group>"; };
+		F3702E4AD9002249EBD4C59F /* FeelsFinderWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = FeelsFinderWidget.entitlements; sourceTree = "<group>"; };
 		F98FFD9D966AFB9E7EE626F0 /* CheckInView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckInView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -70,6 +110,8 @@
 				3EFD0FA49974C610365CF634 /* Feeling.swift */,
 				37DE0194904F1852B74B2075 /* HealthExport.swift */,
 				1A8734DE5259C03953E075CE /* Pairer.swift */,
+				C6FEDD48BD3C7AA36F9E31A1 /* Pick.swift */,
+				CD9A45596C0D8274CF52C2C2 /* Shared.swift */,
 				294EF2D8FFE0890BE48898E0 /* Stats.swift */,
 				0B352644B03444DB7222FA47 /* Store.swift */,
 			);
@@ -93,6 +135,7 @@
 			children = (
 				4BCFD2220AB32B950B352BDF /* Resources */,
 				528FCAA279D0CA1C630F96E7 /* Sources */,
+				CE03D36BDBDF5227383B45C6 /* Widget */,
 				B69214EC335ED7CBC00619F5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -101,8 +144,19 @@
 			isa = PBXGroup;
 			children = (
 				6D8F290C66D77FC1F137500F /* FeelsFinder.app */,
+				A2CE2ADEAF8D0530A44640D9 /* FeelsFinderWidget.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		CE03D36BDBDF5227383B45C6 /* Widget */ = {
+			isa = PBXGroup;
+			children = (
+				F3702E4AD9002249EBD4C59F /* FeelsFinderWidget.entitlements */,
+				2CFAF64F7EA10F54D135B140 /* FeelsFinderWidget.swift */,
+				C044C7F182CDEA4A483C9B27 /* Info.plist */,
+			);
+			path = Widget;
 			sourceTree = "<group>";
 		};
 		E6FF4C52C61B3D9463A79966 /* Design */ = {
@@ -122,10 +176,12 @@
 			buildPhases = (
 				108D9B36CE4F8DF3BB27EF8A /* Sources */,
 				F8BF83B2BEF1D3E79C7DE03D /* Resources */,
+				2DBA810C4579852A1CF37536 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F5E0DEE2B94A9DD93B36EAE0 /* PBXTargetDependency */,
 			);
 			name = FeelsFinder;
 			packageProductDependencies = (
@@ -133,6 +189,23 @@
 			productName = FeelsFinder;
 			productReference = 6D8F290C66D77FC1F137500F /* FeelsFinder.app */;
 			productType = "com.apple.product-type.application";
+		};
+		E8855105FF0E429B0A2F7096 /* FeelsFinderWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3239DD58E37D81E1968D56DB /* Build configuration list for PBXNativeTarget "FeelsFinderWidget" */;
+			buildPhases = (
+				E2B4629A1B0489F1264914DE /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FeelsFinderWidget;
+			packageProductDependencies = (
+			);
+			productName = FeelsFinderWidget;
+			productReference = A2CE2ADEAF8D0530A44640D9 /* FeelsFinderWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -144,6 +217,10 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					058C038B84A240E957446280 = {
+						DevelopmentTeam = M64T9MW7V8;
+						ProvisioningStyle = Automatic;
+					};
+					E8855105FF0E429B0A2F7096 = {
 						DevelopmentTeam = M64T9MW7V8;
 						ProvisioningStyle = Automatic;
 					};
@@ -164,6 +241,7 @@
 			projectRoot = "";
 			targets = (
 				058C038B84A240E957446280 /* FeelsFinder */,
+				E8855105FF0E429B0A2F7096 /* FeelsFinderWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -193,14 +271,38 @@
 				A96DBBB91F1D7E41E2988118 /* Pairer.swift in Sources */,
 				B11EA88057813E6EF9D53479 /* Palette.swift in Sources */,
 				71FD334F688A6D210A45935A /* PatternsView.swift in Sources */,
+				9E2C2CF2EE9B58E2F51933C5 /* Pick.swift in Sources */,
 				9AED4A5A56E97B4F3BE4FE6B /* ReadingSheet.swift in Sources */,
 				46378A2F8F082E87A7DBCFCF /* RootView.swift in Sources */,
+				623D78D3060328BBF9528525 /* Shared.swift in Sources */,
 				801B11D77B082A0233D93422 /* Stats.swift in Sources */,
 				D534669EA1ACB880C1D06BEA /* Store.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E2B4629A1B0489F1264914DE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32571A75353BD610652B5F16 /* Feeling.swift in Sources */,
+				4245A6B73A328ABCFFF2B8AC /* FeelsFinderWidget.swift in Sources */,
+				04E348AC74434C511A91FA6D /* Pairer.swift in Sources */,
+				596E45940B6EE129B8FDD2DA /* Palette.swift in Sources */,
+				6A2BEB95DBEA048108C920E2 /* Pick.swift in Sources */,
+				3336B15CC53ED3D50D0E3E6E /* Shared.swift in Sources */,
+				D0F50E215E23A5EC03B89849 /* Stats.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		F5E0DEE2B94A9DD93B36EAE0 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E8855105FF0E429B0A2F7096 /* FeelsFinderWidget */;
+			targetProxy = 855B87BD2F031C08841F97FF /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		5E805B4EB469E269D3882077 /* Debug */ = {
@@ -270,6 +372,25 @@
 			};
 			name = Debug;
 		};
+		72AD34BF33A9B3A008801377 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Widget/FeelsFinderWidget.entitlements;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				INFOPLIST_FILE = Widget/Info.plist;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.brianhubbell.FeelsFinder.Widget;
+				PRODUCT_NAME = FeelsFinderWidget;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
 		81BF57B7863BC9C9F61891B2 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -327,6 +448,25 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		959B3F60811D2B50C9CAE794 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = Widget/FeelsFinderWidget.entitlements;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				INFOPLIST_FILE = Widget/Info.plist;
+				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.brianhubbell.FeelsFinder.Widget;
+				PRODUCT_NAME = FeelsFinderWidget;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -389,6 +529,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3239DD58E37D81E1968D56DB /* Build configuration list for PBXNativeTarget "FeelsFinderWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				72AD34BF33A9B3A008801377 /* Debug */,
+				959B3F60811D2B50C9CAE794 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 		6FA63B0EECC5FD7E4A19BE9D /* Build configuration list for PBXNativeTarget "FeelsFinder" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

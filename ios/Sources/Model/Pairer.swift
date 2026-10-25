@@ -7,7 +7,11 @@ import Foundation
 /// one. Roughly a third of the time it deliberately spans the
 /// pleasant/unpleasant line for a clean read.
 struct Pairer {
-    private var recent: [String] = []
+    /// Kept so a caller that does not live long (the widget) can carry it
+    /// between deals.
+    private(set) var recent: [String] = []
+
+    init(recent: [String] = []) { self.recent = recent }
 
     mutating func next(given stats: Stats, count: Int) -> [Feeling] {
         let wanted = max(2, min(5, count))

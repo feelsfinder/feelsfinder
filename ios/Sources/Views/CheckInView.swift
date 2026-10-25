@@ -10,7 +10,7 @@ struct CheckInView: View {
     let showPatterns: () -> Void
 
     @Environment(Store.self) private var store
-    @AppStorage("choiceCount") private var choiceCount: Int = 2
+    @AppStorage("choiceCount", store: Shared.defaults) private var choiceCount: Int = 2
 
     @State private var pairer = Pairer()
     @State private var options: [Feeling] = []
