@@ -28,7 +28,7 @@
     <section>
       <h2>What the app stores</h2>
       <p>Feels Finder records the choices you make: which feeling you picked, which feelings you picked it over, and when. That log is everything the app knows. It is kept in the app's own storage on your device.</p>
-      <p>The app does not ask for your name, email address, phone number, contacts, location, photos, health data, or any device identifier, and it has no way to obtain them.</p>
+      <p>The app does not ask for your name, email address, phone number, contacts, location, photos, or any device identifier, and it has no way to obtain them. It does not read anything from Apple Health.</p>
     </section>
 
     <section>
@@ -38,6 +38,9 @@
 
       <h3>Your iCloud</h3>
       <p>If your device is signed in to iCloud, the log is also backed up to your personal iCloud key-value storage, so it survives a lost phone and merges across your own devices. This storage belongs to your Apple Account. It is governed by Apple's privacy policy, and the developer of Feels Finder has no access to it whatsoever. Sign out of iCloud, or turn iCloud off for Feels Finder in Settings, and this stops.</p>
+
+      <h3>Apple Health, if you turn it on</h3>
+      <p>Patterns → Save to Apple Health is off until you tap it and grant access. Once on, each feeling you pick is written to Apple Health as a State of Mind entry: the time, the feeling, how pleasant it is, and the feelings you picked it over. Feels Finder only writes to Health. It never reads from it. Apple Health stores this on your device and, if you use iCloud, in your own end-to-end encrypted iCloud. Other apps can read it only if you give them permission in the Health app. Turn it off in Feels Finder, or under Health → Sharing → Apps, at any time.</p>
 
       <h3>Nowhere else</h3>
       <p>There is no Feels Finder server. The app makes no network requests of its own, contains no advertising or analytics software, and includes no third-party SDKs. No data is sold, shared, rented, or disclosed to anyone, because none of it ever reaches the developer in the first place.</p>
@@ -55,7 +58,8 @@
       <h2>Deleting your data</h2>
       <ul>
         <li><b>Inside the app:</b> Patterns → Clear my data erases the log on the device and marks it deleted in iCloud, so it is not restored on your other devices.</li>
-        <li><b>One entry at a time:</b> swiping back to a previous card takes back the answer you gave it.</li>
+        <li><b>One entry at a time:</b> swiping back to a previous card takes back the answer you gave it, in Apple Health too.</li>
+        <li><b>Apple Health:</b> Clear my data also removes every entry Feels Finder wrote to Health. You can delete them yourself in the Health app under State of Mind.</li>
         <li><b>Everything:</b> deleting the app removes the on-device copy. To remove the iCloud copy as well, clear your data in the app first, or delete the app's data under Settings → your name → iCloud.</li>
       </ul>
     </section>
